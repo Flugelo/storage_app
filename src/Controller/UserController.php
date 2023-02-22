@@ -27,7 +27,7 @@ class UserController extends AbstractController
         $query->select('u.id', 'u.name', 'u.email', 'u.created_at');
         $result = $query->getQuery()->getResult();
 
-        return $this->json(['users' => $result], 200);
+        return $this->json($result, 200);
     }
 
     #[Route('/api/users/{id}', name: 'app_user_show', methods: ['GET'])]
@@ -36,7 +36,7 @@ class UserController extends AbstractController
         $query = $userRepository->createQueryBuilder('u');
         $query->select('u.id', 'u.name', 'u.email', 'u.created_at')->where('u.id = :id')->setParameter('id', $id);
         $user = $query->getQuery()->getResult();
-        return $this->json(['user' => $user], 200);
+        return $this->json($user, 200);
     }
 
     #[Route('/api/users/{id}', name: "app_user_update", methods: ['PUT', 'PATCH'])]
