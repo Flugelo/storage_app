@@ -1,0 +1,18 @@
+# app/config/config.yml
+
+lexik_jwt_authentication:
+  # outras configurações...
+  # ...
+
+  # ativa o debug da biblioteca
+  debug: '%kernel.debug%'
+
+monolog:
+  handlers:
+    main:
+      # outras configurações...
+      # ...
+
+      # ajusta o nível de log para exibir mensagens de debug do Lexik JWT Authentication Bundle
+      level: debug
+      channels: ["security"]
