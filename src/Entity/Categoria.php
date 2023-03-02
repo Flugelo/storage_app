@@ -23,10 +23,10 @@ class Categoria
     private ?string $description = null;
 
     #[ORM\Column(type: "datetime", nullable: true, options: ["default"=>"CURRENT_TIMESTAMP"])]
-    private ?\DateTimeInterface $created_at = null;
+    private ?\DateTime $created_at = null;
 
     #[ORM\Column(type: "datetime", nullable: true, options: ["default"=>"CURRENT_TIMESTAMP"])]
-    private ?\DateTimeInterface $updated_at = null;
+    private ?\DateTime $updated_at = null;
     private Collection $produtos;
 
     public function __construct($name, $description = null)
@@ -65,24 +65,24 @@ class Categoria
         return $this;
     }
 
-    public function getCreatedAt(): ?\DateTimeInterface
+    public function getCreatedAt(): ?\DateTime
     {
         return $this->created_at;
     }
 
-    public function setCreatedAt(?\DateTimeInterface $created_at): self
+    public function setCreatedAt(?\DateTime $created_at): self
     {
         $this->created_at = $created_at;
 
         return $this;
     }
 
-    public function getUpdatedAt(): ?\DateTimeInterface
+    public function getUpdatedAt(): ?\DateTime
     {
         return $this->updated_at;
     }
 
-    public function setUpdatedAt(?\DateTimeInterface $updated_at): self
+    public function setUpdatedAt(?\DateTime $updated_at): self
     {
         $this->updated_at = $updated_at;
 
@@ -103,9 +103,9 @@ class Categoria
     #[ORM\PreUpdate]
     public function updateUpdatedAt(): void
     {
-        $this->updated_at = new \DateTimeImmutable();
+        $this->updated_at = new \DateTime();
         if($this->getCreatedAt() === null)
-            $this->setCreatedAt(new \DateTimeImmutable());
+            $this->setCreatedAt(new \DateTime());
     }
 
     /**

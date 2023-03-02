@@ -35,10 +35,10 @@ class Contato
     private ?string $email = null;
 
     #[ORM\Column(type: "datetime", nullable: true, options: ["default"=>"CURRENT_TIMESTAMP"])]
-    private ?\DateTimeImmutable $created_at = null;
+    private ?\DateTime $created_at = null;
 
     #[ORM\Column(type: "datetime", nullable: true, options: ["default"=>"CURRENT_TIMESTAMP"])]
-    private ?\DateTimeImmutable $updated_at = null;
+    private ?\DateTime $updated_at = null;
     private Collection $fornecedors;
 
     public function getId(): ?int
@@ -82,25 +82,25 @@ class Contato
         return $this;
     }
 
-    public function getCreatedAt(): ?\DateTimeImmutable
+    public function getCreatedAt(): ?\DateTime
     {
         return $this->created_at;
     }
     #[ORM\PrePersist]
-    public function setCreatedAt(\DateTimeImmutable $created_at): self
+    public function setCreatedAt(\DateTime $created_at): self
     {
         $this->created_at = $created_at;
 
         return $this;
     }
 
-    public function getUpdatedAt(): ?\DateTimeImmutable
+    public function getUpdatedAt(): ?\DateTime
     {
         return $this->updated_at;
     }
 
     #[ORM\PreUpdate]
-    public function setUpdatedAt(\DateTimeImmutable $updated_at): self
+    public function setUpdatedAt(\DateTime $updated_at): self
     {
         $this->updated_at = $updated_at;
 
@@ -121,9 +121,9 @@ class Contato
     #[ORM\PreUpdate()]
     public function updateUpdatedAt(): void
     {
-        $this->updated_at = new \DateTimeImmutable();
+        $this->updated_at = new \DateTime();
         if($this->getCreatedAt() === null)
-            $this->setCreatedAt(new \DateTimeImmutable());
+            $this->setCreatedAt(new \DateTime());
     }
 
     /**

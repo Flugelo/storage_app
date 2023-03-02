@@ -13,15 +13,14 @@ class ProdutoHasEstoque
     #[ORM\Column(type: "integer")]
     #[ORM\GeneratedValue(strategy: "AUTO")]
     private ?int $id = null;
-
     #[ORM\Column(type: "integer", nullable: false)]
     private ?float $quantity = null;
 
     #[ORM\Column(type: "datetime", nullable: true, options: ["default"=>"CURRENT_TIMESTAMP"])]
-    private $created_at;
+    private ?\DateTime $created_at;
 
     #[ORM\Column(type: "datetime", nullable: true, options: ["default"=>"CURRENT_TIMESTAMP"])]
-    private $updated_at;
+    private ?\DateTime $updated_at;
 
     #[ORM\ManyToOne(targetEntity: "App\Entity\Produto", inversedBy: "produtoHasEstoques")]
     #[ORM\JoinColumn(name: "produto_id", referencedColumnName: "id", nullable: false)]
@@ -43,8 +42,6 @@ class ProdutoHasEstoque
         $this->produto = $produto;
         $this->quantity = $quantity;
         $this->estoque = $estoque;
-        $this->qtt_max = $qtt_max;
-        $this->qtt_min = $qtt_min;
 
     }
 
@@ -124,5 +121,46 @@ class ProdutoHasEstoque
         $this->produto = $produto;
 
         return $this;
+    }
+
+    /**
+     * @return \DateTime|null
+     */
+    public function getCreatedAt(): ?\DateTime
+    {
+        return $this->created_at;
+    }
+
+    /**
+     * @param \DateTime|null $created_at
+     */
+    public function setCreatedAt(?\DateTime $created_at): void
+    {
+        $this->created_at = $created_at;
+    }
+
+    /**
+     * @return \DateTime|null
+     */
+    public function getUpdatedAt(): ?\DateTime
+    {
+        return $this->updated_at;
+    }
+
+    /**
+     * @param \DateTime|null $updated_at
+     */
+    public function setUpdatedAt(?\DateTime $updated_at): void
+    {
+        $this->updated_at = $updated_at;
+    }
+
+    #[ORM\PrePersist]
+    #[ORM\PreUpdate]
+    public function updateUpdatedAt(): void
+    {
+        $this->updated_at = new \DateTime();
+        if($this->getCreatedAt() === null)
+            $this->setCreatedAt(new \DateTime());
     }
 }

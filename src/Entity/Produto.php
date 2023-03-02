@@ -3,6 +3,7 @@
 namespace App\Entity;
 
 use App\Repository\ProdutoRepository;
+use DateTime;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
@@ -29,10 +30,10 @@ class Produto
     private ?float $weight = null;
 
     #[ORM\Column(type: "datetime", nullable: true, options: ["default" => "CURRENT_TIMESTAMP"])]
-    private $created_at;
+    private ?DateTime $created_at;
 
     #[ORM\Column(type: "datetime", nullable: true, options: ["default" => "CURRENT_TIMESTAMP"])]
-    private $updated_at;
+    private ?DateTime $updated_at;
 
     #[ORM\ManyToMany(targetEntity: "App\Entity\Fornecedor")]
     #[ORM\JoinTable(name: "Produtofornecedor")]
@@ -148,6 +149,49 @@ class Produto
             'estoques' => $this->getProdutoHasEstoques()
         ];
     }
+
+    /**
+     * @return DateTime|null
+     */
+    public function getCreatedAt(): ?DateTime
+    {
+        return $this->created_at;
+    }
+
+    /**
+     * @param DateTime|null $created_at
+     */
+    public function setCreatedAt(?DateTime $created_at): void
+    {
+        $this->created_at = $created_at;
+    }
+
+    /**
+     * @return DateTime|null
+     */
+    public function getUpdatedAt(): ?DateTime
+    {
+        return $this->updated_at;
+    }
+
+    /**
+     * @param DateTime|null $updated_at
+     */
+    public function setUpdatedAt(?DateTime $updated_at): void
+    {
+        $this->updated_at = $updated_at;
+    }
+
+    #[ORM\PrePersist]
+    #[ORM\PreUpdate]
+    public function updateUpdatedAt(): void
+    {
+        $this->updated_at = new \DateTime();
+        if($this->getCreatedAt() === null)
+            $this->setCreatedAt(new \DateTime());
+    }
+
+
 
     public function addFornecedor(fornecedor $fornecedor): self
     {
