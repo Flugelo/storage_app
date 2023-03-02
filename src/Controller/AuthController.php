@@ -4,7 +4,6 @@ namespace App\Controller;
 
 use App\Entity\User;
 use App\Repository\UserRepository;
-use Lexik\Bundle\JWTAuthenticationBundle\Security\Authentication\Token\JWTUserToken;
 use Lexik\Bundle\JWTAuthenticationBundle\Services\JWTTokenManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -13,7 +12,7 @@ use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Security\Core\User\UserInterface;
 
-class AuthController extends AbstractController
+class AuthController extends ApiController
 {
     private $jwtManager;
 
@@ -23,33 +22,28 @@ class AuthController extends AbstractController
     }
 
     #[Route('/api/register', name: 'app_auth_register', methods: ['POST'])]
-    public function register(Request $request, UserPasswordHasherInterface $passwordHasher, UserRepository $userRepository): JsonResponse
+    public function register(Request $request, UserPasswordHasherInterface $passwordHasher, UserRepository $userRepository)
     {
-        $data = json_decode(
-            $request->getContent(),
-            true
-        );
-
-        $email = $data['email'];
-        $name = $data['name'];
-        $password = $data['password'];
+        $request = $this->transformJsonBody($request);
+        $email = $request->get("email");
+        $username = $request->get("username");
+        $name = $request->get("name");
+        $password = $request->get("password");
 
 
-        if (empty($email) || empty($password) || empty($name)) return $this->json(['message' => 'Email ou senha invalidos'], 401);
+        if (empty($email) || empty($password) || empty($username)) return $this->json(['message' => 'Todos os campos devem ser preenchidos'], 401);
 
-        if ($userRepository->findBy(['email' => $email]) != null) return $this->json(['message' => 'Já existe uma conta cadastrada com este email!']);
+        if ($userRepository->findBy(['email' => $email]) != null) return $this->json(['message' => 'Já existe uma conta cadastrada com este email!'], 409);
 
         $user = new User();
         $user->setName($name);
         $user->setEmail($email);
+        $user->setUsername($username);
         $user->setPassword($passwordHasher->hashPassword($user, $password));
-        $user->setCreatedAt(new \DateTimeImmutable());
-        $user->setUpdatedAt(new \DateTimeImmutable());
         $userRepository->save($user, true);
 
 
-        return $this->json(['message' => 'Usuario registrado com sucesso', 'user' => $user], 200);
-
+        return $this->respondWithSuccess(sprintf('Usuário %s foi criado com sucesso.', $user->getName()));
     }
 
 
@@ -58,7 +52,7 @@ class AuthController extends AbstractController
      * @param JWTTokenManagerInterface $JWTManager
      * @return JsonResponse
      */
-    public function getTokenUser(UserInterface $user, JWTTokenManagerInterface $JWTManager)
+    public function getTokenUser(UserInterface $user, JWTTokenManagerInterface $JWTManager): JsonResponse
     {
         return new JsonResponse(['token' => $JWTManager->create($user)]);
     }
