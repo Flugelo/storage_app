@@ -74,8 +74,8 @@ class FornecedorController extends AbstractController
     {
 
         $data = json_decode($request->getContent(), true);
-
-        if ($data['fantasia'] == null || $data['cnpj'] == null || $data['status'] == null) return $this->json(['message' => 'Formulário incorreto'], 422);
+        // return $this->json($data);
+        if ($data['fantasia'] === null || $data['cnpj'] === null || $data['status'] === null) return $this->json(['message' => 'Formulário incorreto'], 422);
 
         $fantasia = $data['fantasia'];
         $razao_social = $data['razao_social'];
@@ -109,6 +109,6 @@ class FornecedorController extends AbstractController
         $this->EM->remove($fornecedor);
         $this->EM->flush();
 
-        return $this->json("Fornecedor deletado com sucesso.", 200);
+        return $this->json(['message' => "Fornecedor deletado com sucesso."], 200);
     }
 }

@@ -165,4 +165,13 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
             'created_at' => $this->created_at
         ];
     }
+
+    #[ORM\PrePersist]
+    #[ORM\PreUpdate]
+    public function updateUpdatedAt(): void
+    {
+        $this->updated_at = new \DateTime();
+        if($this->getCreatedAt() === null)
+            $this->setCreatedAt(new \DateTime());
+    }
 }

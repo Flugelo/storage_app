@@ -37,16 +37,15 @@ class Fornecedor
     private ?bool $status = null;
 
     #[ORM\Column(type: "datetime", nullable: true, options: ["default"=>"CURRENT_TIMESTAMP"])]
-    private ?\DateTimeImmutable $created_at = null;
+    private ?\DateTime $created_at = null;
 
     #[ORM\Column(type: "datetime", nullable: true, options: ["default"=>"CURRENT_TIMESTAMP"])]
-    private ?\DateTimeImmutable $updated_at = null;
+    private ?\DateTime $updated_at = null;
 
-    #[ORM\ManyToMany(targetEntity: "App\Entity\Contato")]
-    #[ORM\JoinTable(name: "Fornecedorcontato")]
-    #[ORM\JoinColumn(name: "Fornecedor_id", referencedColumnName: "id")]
-    #[ORM\InverseJoinColumn(name: "Contato_id", referencedColumnName: "id")]
+    #[ORM\ManyToMany(targetEntity: Contato::class, inversedBy: 'fornecedors')]
     private Collection $contato;
+
+    #[ORM\ManyToMany(targetEntity: Produto::class, mappedBy: 'fornecedor')]
     private Collection $produtos;
 
 
@@ -134,24 +133,24 @@ class Fornecedor
         return $this;
     }
 
-    public function getCreatedAt(): ?\DateTimeImmutable
+    public function getCreatedAt(): ?\DateTime
     {
         return $this->created_at;
     }
 
-    public function setCreatedAt(\DateTimeImmutable $created_at): self
+    public function setCreatedAt(\DateTime $created_at): self
     {
         $this->created_at = $created_at;
 
         return $this;
     }
 
-    public function getUpdatedAt(): ?\DateTimeImmutable
+    public function getUpdatedAt(): ?\DateTime
     {
         return $this->updated_at;
     }
 
-    public function setUpdatedAt(\DateTimeImmutable $updated_at): self
+    public function setUpdatedAt(\DateTime $updated_at): self
     {
         $this->updated_at = $updated_at;
 
@@ -162,12 +161,28 @@ class Fornecedor
     #[ORM\PreUpdate]
     public function updateUpdatedAt(): void
     {
-        $this->updated_at = new \DateTimeImmutable();
+        $this->updated_at = new \DateTime();
         if($this->getCreatedAt() === null)
-            $this->setCreatedAt(new \DateTimeImmutable());
+            $this->setCreatedAt(new \DateTime());
     }
 
-    public function getValues(): array{
+    public function getValues(): array
+    {
+
+        $contatos = array();
+        foreach ($this->getContato() as $contato) {
+            array_push($contatos, $contato->getVelues());
+        }
+
+        $produtos = array();
+        foreach ($this->getProdutos() as $produto) {
+            $produtoHasEstoques = $produto->getProdutoHasEstoques();
+            foreach ($produtoHasEstoques as $protudoHasEstoque) {
+                 $estoque = $protudoHasEstoque->getEstoque();
+                array_push($produtos, $estoque->getValues());
+            }
+        }
+
         return [
             "id" => $this->id,
             "fantasia" => $this->fantasia,
@@ -175,6 +190,9 @@ class Fornecedor
             "razao_social" => $this->razao_social,
             "responsavel" => $this->responsavel,
             "created_at" => $this->created_at,
+            "status" => $this->status,
+            "contados" => $contatos,
+            "produtos" => $produtos,
         ];
     }
 
@@ -228,5 +246,4 @@ class Fornecedor
 
         return $this;
     }
-
 }

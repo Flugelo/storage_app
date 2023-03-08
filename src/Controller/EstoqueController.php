@@ -21,7 +21,8 @@ class EstoqueController extends AbstractController
     public function index(): JsonResponse
     {
         $queryBuilder = $this->EM->getRepository(Estoque::class)->createQueryBuilder('e');
-        $queryBuilder = $queryBuilder->select('e.id', 'e.name', 'e.description', 'e.created_at');
+        $queryBuilder = $queryBuilder->select('e.id', 'e.name', 'e.description', 'e.created_at')
+                                    ->leftJoin('e.produtoHasEstoques', 'p_e');
         $result = $queryBuilder->getQuery()->getResult();
 
         return $this->json($result, 200);
@@ -43,14 +44,11 @@ class EstoqueController extends AbstractController
     {
         $data = json_decode($request->getContent(), true);
 
-        if ($data['name'] === null || $data['qtd_max_stock'] == null || $data['qtd_min_stock'] == null) return $this->json(["message" => "Formulário incorreto"], 422);
+        if (!isset($data['name']) || !isset($data['description'])) return $this->json(["message" => "Formulário incorreto"], 422);
 
         $name = $data["name"];
         $description = $data["description"];
-        $qtt_max = $data['qtt_max'];
-        $qtt_min = $data['qtt_min'];
-
-        $estoque = new Estoque($name, $description, $qtt_max, $qtt_min);
+        $estoque = new Estoque($name, $description);
 
         $repository->save($estoque, true);
 
@@ -71,13 +69,8 @@ class EstoqueController extends AbstractController
 
         $name = $data["name"];
         $description = $data["description"];
-        $qtt_max = $data['qtt_max'];
-        $qtt_min = $data['qtt_min'];
         $estoque->setName($name);
         $estoque->setDescription($description);
-        $estoque->setQttMax($qtt_max);
-        $estoque->setQttMin($qtt_min);
-
         $this->EM->persist($estoque);
         $this->EM->flush();
 
