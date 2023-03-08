@@ -22,12 +22,6 @@ class Estoque
     #[ORM\Column(type: "string", length: 85, nullable: true)]
     private ?string $description = null;
 
-    #[ORM\Column(type: "float", nullable: true)]
-    private $qtt_max;
-
-    #[ORM\Column(type: "float", nullable: true)]
-    private $qtt_min;
-
     #[ORM\Column(type: "datetime", nullable: true, options: ["default"=>"CURRENT_TIMESTAMP"])]
     private ?\DateTime $created_at = null;
 
@@ -38,12 +32,10 @@ class Estoque
     private Collection $produtoHasEstoques;
 
 
-    public function __construct($name, $description, $qtt_max, $qtt_min)
+    public function __construct($name, $description)
     {
         $this->name = $name;
         $this->description = $description;
-        $this->qtt_min = $qtt_min;
-        $this->qtt_max = $qtt_max;
         $this->produtoHasEstoques = new ArrayCollection();
     }
 
@@ -108,47 +100,22 @@ class Estoque
         return $this;
     }
 
-    /**
-     * @return mixed
-     */
-    public function getQttMax()
-    {
-        return $this->qtt_max;
-    }
-
-    /**
-     * @param mixed $qtt_max
-     */
-    public function setQttMax($qtt_max): void
-    {
-        $this->qtt_max = $qtt_max;
-    }
-
-    /**
-     * @return mixed
-     */
-    public function getQttMin()
-    {
-        return $this->qtt_min;
-    }
-
-    /**
-     * @param mixed $qtt_min
-     */
-    public function setQttMin($qtt_min): void
-    {
-        $this->qtt_min = $qtt_min;
-    }
 
 
-    public function getvalues(): array
+
+
+    public function getValues(): array
     {
+        $produtosHasEstoque = $this->getProdutoHasEstoques();
+        $produtos = array();
+        foreach ($produtosHasEstoque as $p_e) {
+            array_push($produtos, $p_e->getProduto()->getValue());
+        }
         return [
             'id' => $this->id,
             'name' => $this->name,
-            'qtt_min' => $this->qtt_min,
-            'qtt_max' => $this->qtt_max,
             'description' => $this->description,
+            'produtos' => $produtos,
             'created_at' => $this->created_at
         ];
     }

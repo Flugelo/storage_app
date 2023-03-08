@@ -13,14 +13,9 @@ class ProdutoHasEstoque
     #[ORM\Column(type: "integer")]
     #[ORM\GeneratedValue(strategy: "AUTO")]
     private ?int $id = null;
+    
     #[ORM\Column(type: "integer", nullable: false)]
     private ?float $quantity = null;
-
-    #[ORM\Column(type: "datetime", nullable: true, options: ["default"=>"CURRENT_TIMESTAMP"])]
-    private ?\DateTime $created_at;
-
-    #[ORM\Column(type: "datetime", nullable: true, options: ["default"=>"CURRENT_TIMESTAMP"])]
-    private ?\DateTime $updated_at;
 
     #[ORM\ManyToOne(targetEntity: "App\Entity\Produto", inversedBy: "produtoHasEstoques")]
     #[ORM\JoinColumn(name: "produto_id", referencedColumnName: "id", nullable: false)]
@@ -29,6 +24,18 @@ class ProdutoHasEstoque
     #[ORM\ManyToOne(targetEntity: "App\Entity\Estoque", inversedBy: "produtoHasEstoques")]
     #[ORM\JoinColumn(name: "estoque_id", referencedColumnName: "id", nullable: false)]
     private ?estoque $estoque = null;
+
+    #[ORM\Column(type: "float", nullable: false)]
+    private ?float $qtt_max = null;
+
+    #[ORM\Column(type: "float", nullable: false)]
+    private ?float $qtt_min = null;
+
+    #[ORM\Column(type: "datetime", nullable: true, options: ["default"=>"CURRENT_TIMESTAMP"])]
+    private ?\DateTime $created_at;
+
+    #[ORM\Column(type: "datetime", nullable: true, options: ["default"=>"CURRENT_TIMESTAMP"])]
+    private ?\DateTime $updated_at;
 
     /**
      * @param float|null $quantity
@@ -163,4 +170,40 @@ class ProdutoHasEstoque
         if($this->getCreatedAt() === null)
             $this->setCreatedAt(new \DateTime());
     }
+
+    public function getQttMax(): ?float
+    {
+        return $this->qtt_max;
+    }
+
+    public function setQttMax(float $qtt_max): self
+    {
+        $this->qtt_max = $qtt_max;
+
+        return $this;
+    }
+
+    public function getQttMin(): ?float
+    {
+        return $this->qtt_min;
+    }
+
+    public function setQttMin(float $qtt_min): self
+    {
+        $this->qtt_min = $qtt_min;
+
+        return $this;
+    }
+
+    public function getValues(): array{
+        
+        return [
+            'id' => $this->id,
+            'produto' => $this->getProduto()->getValue(),
+            'quantity' => $this->quantity,
+            'qtt_max' => $this->qtt_max,
+            'qtt_min' => $this->qtt_min,
+        ];
+    }
+
 }

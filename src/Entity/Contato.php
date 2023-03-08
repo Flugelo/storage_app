@@ -6,8 +6,6 @@ use App\Repository\ContatoRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
-use Gedmo\Mapping\Annotation\Timestampable;
-use JMS\Serializer\Annotation\Exclude;
 
 #[ORM\Entity(repositoryClass: ContatoRepository::class)]
 class Contato
@@ -39,6 +37,8 @@ class Contato
 
     #[ORM\Column(type: "datetime", nullable: true, options: ["default"=>"CURRENT_TIMESTAMP"])]
     private ?\DateTime $updated_at = null;
+
+    #[ORM\ManyToMany(targetEntity: Fornecedor::class, mappedBy: 'Contato')]
     private Collection $fornecedors;
 
     public function getId(): ?int
@@ -152,7 +152,4 @@ class Contato
 
         return $this;
     }
-
-
-
 }

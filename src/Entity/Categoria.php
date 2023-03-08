@@ -22,12 +22,17 @@ class Categoria
     #[ORM\Column(type: "string", length: 255, nullable: true)]
     private ?string $description = null;
 
+
     #[ORM\Column(type: "datetime", nullable: true, options: ["default"=>"CURRENT_TIMESTAMP"])]
     private ?\DateTime $created_at = null;
 
+
     #[ORM\Column(type: "datetime", nullable: true, options: ["default"=>"CURRENT_TIMESTAMP"])]
     private ?\DateTime $updated_at = null;
+
+    #[ORM\ManyToMany(targetEntity: Produto::class, mappedBy: 'categoria')]
     private Collection $produtos;
+
 
     public function __construct($name, $description = null)
     {
@@ -134,6 +139,5 @@ class Categoria
 
         return $this;
     }
-
 
 }

@@ -82,8 +82,6 @@
       </field>
       <field name="name" type="string" size="255" required="true" uuid="4a39d43e-3eda-4c49-9e40-76b7c3e79102"/>
       <field name="description" type="string" size="85" uuid="78d0f07a-9106-4d97-8243-06e1c5e59e18"/>
-      <field name="qtt_max" type="float" uuid="60667aec-c2f7-484e-8fc4-a31c3fef8989"/>
-      <field name="qtt_min" type="float" uuid="73d79f1e-920d-4026-95c1-7c84c52acf8e"/>
       <field name="created_at" type="datetime" default="CURRENT_TIMESTAMP" uuid="f26c3869-0dea-4803-9b0e-1e92a80ef5b9"/>
       <field name="updated_at" type="datetime" default="CURRENT_TIMESTAMP" uuid="188745ca-00cc-4e1f-97ed-c222365f5fc6"/>
       <orm-attributes>
@@ -157,6 +155,8 @@
       <field name="quantity" type="integer" required="true" uuid="bd029673-61a7-4ae4-943d-12ad0134e63d"/>
       <field name="produto_id" type="integer" required="true" uuid="a155610d-973c-4b69-bceb-9fe98ec69631"/>
       <field name="estoque_id" type="integer" required="true" uuid="51b04647-6e24-4576-8977-0a8e74c6e046"/>
+      <field name="qtt_max" type="float" uuid="cbc8b5dc-8f47-44d5-ab9e-61f349de4904"/>
+      <field name="qtt_min" type="float" uuid="f98122e8-6073-43da-93ae-a10615b45783"/>
       <field name="created_at" type="datetime" default="CURRENT_TIMESTAMP" uuid="bfd81032-10b0-41a1-9281-beb97b0e5a66"/>
       <field name="updated_at" type="datetime" default="CURRENT_TIMESTAMP" uuid="322ad80c-e11a-43b5-b39a-48f2f3b17dd2"/>
       <orm-attributes>
@@ -194,15 +194,15 @@
     <association uuid="57af395f-8a74-42b3-8e4d-6e1cab5ace9f" color="#FCCAE8"/>
     <association uuid="727d81bb-abde-46d2-a473-156f82e21ebb" color="#FF7ED2"/>
     <entity uuid="12c8bef0-63ea-4144-aedc-125662d186d7" bg-color="#FFFFFF" hdr-color="#D2D2D2" position-x="150" position-y="50" size-x="0" size-x2="127" size-y="0" size-y2="60"/>
-    <entity uuid="50232652-cd23-4775-91ee-cf22a184702e" bg-color="#FFFFFF" hdr-color="#D2D2D2" position-x="3" position-y="438" size-x="0" size-x2="162" size-y="0" size-y2="129"/>
+    <entity uuid="50232652-cd23-4775-91ee-cf22a184702e" bg-color="#FFFFFF" hdr-color="#D2D2D2" position-x="62" position-y="391" size-x="0" size-x2="119" size-y="0" size-y2="115"/>
     <entity uuid="59bf59db-827c-4a40-b37e-f83771297699" bg-color="#FFFFFF" hdr-color="#D2D2D2" position-x="374" position-y="50" size-x="0" size-x2="126" size-y="0" size-y2="60"/>
     <entity uuid="6c2af83c-b501-4021-bb06-104e00c53dd8" bg-color="#FFFFFF" hdr-color="#D2D2D2" position-x="250" position-y="200" size-x="0" size-x2="172" size-y="0" size-y2="129"/>
-    <entity uuid="752700de-60d6-406a-a27b-c2943af902b6" bg-color="#FFFFFF" hdr-color="#D2D2D2" position-x="700" position-y="371" size-x="0" size-x2="162" size-y="0" size-y2="129"/>
+    <entity uuid="752700de-60d6-406a-a27b-c2943af902b6" bg-color="#FFFFFF" hdr-color="#D2D2D2" position-x="563" position-y="541" size-x="0" size-x2="151" size-y="0" size-y2="129"/>
     <entity uuid="8468a25f-0181-439f-bb6b-143dfb4a71e6" bg-color="#FFFFFF" hdr-color="#D2D2D2" position-x="700" position-y="200" size-x="0" size-x2="162" size-y="0" size-y2="87"/>
     <entity uuid="a84be5f7-0127-4288-b6b1-70674c3a10ce" bg-color="#FFFFFF" hdr-color="#D2D2D2" position-x="610" position-y="46" size-x="0" size-x2="119" size-y="0" size-y2="60"/>
-    <entity uuid="b77a8006-c672-47bd-99c9-af0af2375623" bg-color="#FFFFFF" hdr-color="#D2D2D2" position-x="416" position-y="393" size-x="0" size-x2="162" size-y="0" size-y2="87"/>
-    <entity uuid="cff1eb82-2b97-4bce-8c24-463b2ffadd19" bg-color="#FFFFFF" hdr-color="#D2D2D2" position-x="500" position-y="200" size-x="0" size-x2="144" size-y="0" size-y2="115"/>
-    <entity uuid="f9ac22eb-a0cf-4005-9b87-1418a484e8d3" bg-color="#FFFFFF" hdr-color="#D2D2D2" position-x="50" position-y="200" size-x="0" size-x2="116" size-y="0" size-y2="101"/>
+    <entity uuid="b77a8006-c672-47bd-99c9-af0af2375623" bg-color="#FFFFFF" hdr-color="#D2D2D2" position-x="632" position-y="305" size-x="0" size-x2="118" size-y="0" size-y2="115"/>
+    <entity uuid="cff1eb82-2b97-4bce-8c24-463b2ffadd19" bg-color="#FFFFFF" hdr-color="#D2D2D2" position-x="493" position-y="203" size-x="0" size-x2="123" size-y="0" size-y2="115"/>
+    <entity uuid="f9ac22eb-a0cf-4005-9b87-1418a484e8d3" bg-color="#FFFFFF" hdr-color="#D2D2D2" position-x="58" position-y="200" size-x="0" size-x2="116" size-y="0" size-y2="101"/>
     <many-to-many-association uuid="2670eb77-63ca-4fb9-845a-daeaae2c0382" color="#CDC32B"/>
     <many-to-many-association uuid="4f54ef58-378f-481c-9f96-798559b3362a" color="#F4931F"/>
     <many-to-many-association uuid="da3b4feb-3957-4c52-8e1e-5ce5fd9ef367" color="#B31F24"/>

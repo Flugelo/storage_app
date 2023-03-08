@@ -42,11 +42,10 @@ class Fornecedor
     #[ORM\Column(type: "datetime", nullable: true, options: ["default"=>"CURRENT_TIMESTAMP"])]
     private ?\DateTime $updated_at = null;
 
-    #[ORM\ManyToMany(targetEntity: "App\Entity\Contato")]
-    #[ORM\JoinTable(name: "Fornecedorcontato")]
-    #[ORM\JoinColumn(name: "Fornecedor_id", referencedColumnName: "id")]
-    #[ORM\InverseJoinColumn(name: "Contato_id", referencedColumnName: "id")]
+    #[ORM\ManyToMany(targetEntity: Contato::class, inversedBy: 'fornecedors')]
     private Collection $contato;
+
+    #[ORM\ManyToMany(targetEntity: Produto::class, mappedBy: 'fornecedor')]
     private Collection $produtos;
 
 
@@ -167,7 +166,23 @@ class Fornecedor
             $this->setCreatedAt(new \DateTime());
     }
 
-    public function getValues(): array{
+    public function getValues(): array
+    {
+
+        $contatos = array();
+        foreach ($this->getContato() as $contato) {
+            array_push($contatos, $contato->getVelues());
+        }
+
+        $produtos = array();
+        foreach ($this->getProdutos() as $produto) {
+            $produtoHasEstoques = $produto->getProdutoHasEstoques();
+            foreach ($produtoHasEstoques as $protudoHasEstoque) {
+                 $estoque = $protudoHasEstoque->getEstoque();
+                array_push($produtos, $estoque->getValues());
+            }
+        }
+
         return [
             "id" => $this->id,
             "fantasia" => $this->fantasia,
@@ -175,6 +190,9 @@ class Fornecedor
             "razao_social" => $this->razao_social,
             "responsavel" => $this->responsavel,
             "created_at" => $this->created_at,
+            "status" => $this->status,
+            "contados" => $contatos,
+            "produtos" => $produtos,
         ];
     }
 
@@ -228,5 +246,4 @@ class Fornecedor
 
         return $this;
     }
-
 }

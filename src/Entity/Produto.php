@@ -35,31 +35,25 @@ class Produto
     #[ORM\Column(type: "datetime", nullable: true, options: ["default" => "CURRENT_TIMESTAMP"])]
     private ?DateTime $updated_at;
 
-    #[ORM\ManyToMany(targetEntity: "App\Entity\Fornecedor")]
-    #[ORM\JoinTable(name: "Produtofornecedor")]
-    #[ORM\JoinColumn(name: "Produto_id", referencedColumnName: "id")]
-    #[ORM\InverseJoinColumn(name: "Fornecedor_id", referencedColumnName: "id")]
-    private Collection $fornecedor;
-
-    #[ORM\ManyToMany(targetEntity: "App\Entity\Categoria")]
-    #[ORM\JoinTable(name: "Produtocategoria")]
-    #[ORM\JoinColumn(name: "Produto_id", referencedColumnName: "id")]
-    #[ORM\InverseJoinColumn(name: "Categoria_id", referencedColumnName: "id")]
-    private Collection $categoria;
-
     #[ORM\OneToMany(targetEntity: "App\Entity\ProdutoHasEstoque", mappedBy: "produto")]
     private Collection $produtoHasEstoques;
 
+    #[ORM\ManyToMany(targetEntity: Fornecedor::class, inversedBy: 'produtos')]
+    private Collection $fornecedor;
+
+    #[ORM\ManyToMany(targetEntity: Categoria::class, inversedBy: 'produtos')]
+    private Collection $categoria;
+
     public function __construct($name, $description, $weight, $unit)
     {
-        $this->fornecedor = new ArrayCollection();
-        $this->categoria = new ArrayCollection();
-        $this->produtoHasEstoques = new ArrayCollection();
 
         $this->name = $name;
         $this->description = $description;
         $this->unit = $unit;
         $this->weight = $weight;
+        $this->fornecedor = new ArrayCollection();
+        $this->categoria = new ArrayCollection();
+        $this->produtoHasEstoques = new ArrayCollection();
     }
 
     /**
@@ -126,27 +120,35 @@ class Produto
         return $this;
     }
 
-    /**
-     * @return Collection<int, fornecedor>
-     */
-    public function getFornecedor(): Collection
-    {
-        return $this->fornecedor;
-    }
 
     /*
     * @return array;
     */
     public function getValue(): array
     {
+        $categorias = array();
+        foreach ($this->getCategoria() as $categoria) {
+            array_push($categorias, $categoria->getValues());
+        }
 
+        $estoques = array();
+        // dd($this->getProdutoHasEstoques());
+        foreach ($this->getProdutoHasEstoques() as $stock) {
+            array_push($estoques, ['id' => $stock->getEstoque()->getId(), 'name' => $stock->getEstoque()->getName()]);
+        }
+
+        $fornecedores = array();
+
+        foreach ($this->getFornecedor() as $fornecedor) {
+            array_push($fornecedores, ['id' => $fornecedor->getId(), 'fantasia' => $fornecedor->getFantasia()]);
+        }
         return [
             'id' => $this->id,
             'name' => $this->name,
             'description' => $this->description,
-            'fornecedor' => $this->fornecedor->getValues(),
-            'categoria' => $this->getCategorias(),
-            'estoques' => $this->getProdutoHasEstoques()
+            'fornecedor' => $fornecedores,
+            'categoria' => $categorias,
+            'estoques' => $estoques,
         ];
     }
 
@@ -187,51 +189,10 @@ class Produto
     public function updateUpdatedAt(): void
     {
         $this->updated_at = new \DateTime();
-        if($this->getCreatedAt() === null)
+        if ($this->getCreatedAt() === null)
             $this->setCreatedAt(new \DateTime());
     }
 
-
-
-    public function addFornecedor(fornecedor $fornecedor): self
-    {
-        if (!$this->fornecedor->contains($fornecedor)) {
-            $this->fornecedor->add($fornecedor);
-        }
-
-        return $this;
-    }
-
-    public function removeFornecedor(fornecedor $fornecedor): self
-    {
-        $this->fornecedor->removeElement($fornecedor);
-
-        return $this;
-    }
-
-    /**
-     * @return Collection<int, categoria>
-     */
-    public function getCategorias(): Collection
-    {
-        return $this->categoria;
-    }
-
-    public function addCategorium(categoria $categorium): self
-    {
-        if (!$this->categoria->contains($categorium)) {
-            $this->categoria->add($categorium);
-        }
-
-        return $this;
-    }
-
-    public function removeCategorium(categoria $categorium): self
-    {
-        $this->categoria->removeElement($categorium);
-
-        return $this;
-    }
 
     /**
      * @return Collection<int, ProdutoHasEstoque>
@@ -263,5 +224,51 @@ class Produto
         return $this;
     }
 
+    /**
+     * @return Collection<int, fornecedor>
+     */
+    public function getFornecedor(): Collection
+    {
+        return $this->fornecedor;
+    }
 
+    public function addFornecedor(fornecedor $fornecedor): self
+    {
+        if (!$this->fornecedor->contains($fornecedor)) {
+            $this->fornecedor->add($fornecedor);
+        }
+
+        return $this;
+    }
+
+    public function removeFornecedor(fornecedor $fornecedor): self
+    {
+        $this->fornecedor->removeElement($fornecedor);
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, categoria>
+     */
+    public function getCategoria(): Collection
+    {
+        return $this->categoria;
+    }
+
+    public function addCategorium(categoria $categorium): self
+    {
+        if (!$this->categoria->contains($categorium)) {
+            $this->categoria->add($categorium);
+        }
+
+        return $this;
+    }
+
+    public function removeCategorium(categoria $categorium): self
+    {
+        $this->categoria->removeElement($categorium);
+
+        return $this;
+    }
 }
