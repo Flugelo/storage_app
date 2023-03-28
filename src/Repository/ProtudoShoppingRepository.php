@@ -2,26 +2,26 @@
 
 namespace App\Repository;
 
-use App\Entity\ProdutoHasEstoque;
+use App\Entity\ProdutoShopping;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 
 /**
- * @extends ServiceEntityRepository<ProdutoHasEstoque>
+ * @extends ServiceEntityRepository<ProdutoShopping>
  *
- * @method ProdutoHasEstoque|null find($id, $lockMode = null, $lockVersion = null)
- * @method ProdutoHasEstoque|null findOneBy(array $criteria, array $orderBy = null)
- * @method ProdutoHasEstoque[]    findAll()
- * @method ProdutoHasEstoque[]    findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
+ * @method ProtudoShopping|null find($id, $lockMode = null, $lockVersion = null)
+ * @method ProtudoShopping|null findOneBy(array $criteria, array $orderBy = null)
+ * @method ProtudoShopping[]    findAll()
+ * @method ProtudoShopping[]    findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
  */
-class ProdutoHasEstoqueRepository extends ServiceEntityRepository
+class ProtudoShoppingRepository extends ServiceEntityRepository
 {
     public function __construct(ManagerRegistry $registry)
     {
-        parent::__construct($registry, ProdutoHasEstoque::class);
+        parent::__construct($registry, ProdutoShopping::class);
     }
 
-    public function save(ProdutoHasEstoque $entity, bool $flush = false): void
+    public function save(ProdutoShopping $entity, bool $flush = false): void
     {
         $this->getEntityManager()->persist($entity);
 
@@ -30,7 +30,7 @@ class ProdutoHasEstoqueRepository extends ServiceEntityRepository
         }
     }
 
-    public function remove(ProdutoHasEstoque $entity, bool $flush = false): void
+    public function remove(ProdutoShopping $entity, bool $flush = false): void
     {
         $this->getEntityManager()->remove($entity);
 
@@ -40,7 +40,7 @@ class ProdutoHasEstoqueRepository extends ServiceEntityRepository
     }
 
 //    /**
-//     * @return ProdutoHasEstoque[] Returns an array of ProdutoHasEstoque objects
+//     * @return ProtudoShopping[] Returns an array of ProtudoShopping objects
 //     */
 //    public function findByExampleField($value): array
 //    {
@@ -54,7 +54,7 @@ class ProdutoHasEstoqueRepository extends ServiceEntityRepository
 //        ;
 //    }
 
-//    public function findOneBySomeField($value): ?ProdutoHasEstoque
+//    public function findOneBySomeField($value): ?ProtudoShopping
 //    {
 //        return $this->createQueryBuilder('p')
 //            ->andWhere('p.exampleField = :val')

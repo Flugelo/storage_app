@@ -2,16 +2,13 @@
 
 namespace App\Controller;
 
-use App\Entity\Contato;
 use App\Entity\Fornecedor;
-use App\Repository\ContatoRepository;
 use App\Repository\FornecedorRepository;
-use Doctrine\ORM\Query;
 use Doctrine\Persistence\ManagerRegistry;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
-use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\Routing\Annotation\Route;
 
 class FornecedorController extends AbstractController
 {
@@ -25,7 +22,7 @@ class FornecedorController extends AbstractController
     {
 
         $query = $fornecedorRepository->createQueryBuilder('f');
-        $query = $query->select('f.id', 'f.fantasia', 'f.razao_social', 'f.cnpj', 'f.responsavel', 'f.status', 'f.created_at');
+        $query = $query->select('f.id', 'f.fantasia', 'f.razao_social', 'f.cnpj', 'f.responsavel', 'f.status', 'f.created_at')->orderBy('f.id', 'DESC');;
         $result = $query->getQuery()->getResult();
 
         return $this->json($result, 200);

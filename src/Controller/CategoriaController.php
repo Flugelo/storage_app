@@ -9,7 +9,6 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
-use Symfony\Component\Validator\Constraints\Json;
 
 class CategoriaController extends AbstractController
 {
@@ -23,7 +22,7 @@ class CategoriaController extends AbstractController
     public function index(): JsonResponse
     {
         $queryBuilder = $this->EM->getRepository(Categoria::class)->createQueryBuilder('c');
-        $queryBuilder = $queryBuilder->select('c.id', 'c.name', 'c.description', 'c.created_at');
+        $queryBuilder = $queryBuilder->select('c.id', 'c.name', 'c.description', 'c.created_at')->orderBy('c.id', 'DESC');;
         $results = $queryBuilder->getQuery()->getResult();
 
         return $this->json($results,200);

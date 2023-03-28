@@ -6,7 +6,6 @@ use App\Repository\ProdutoRepository;
 use DateTime;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
-use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: ProdutoRepository::class)]
@@ -35,14 +34,20 @@ class Produto
     #[ORM\Column(type: "datetime", nullable: true, options: ["default" => "CURRENT_TIMESTAMP"])]
     private ?DateTime $updated_at;
 
-    #[ORM\OneToMany(targetEntity: "App\Entity\ProdutoHasEstoque", mappedBy: "produto")]
-    private Collection $produtoHasEstoques;
+    #[ORM\OneToMany(targetEntity: "App\Entity\Estoque", mappedBy: "produto")]
+    private Collection $estoques;
 
     #[ORM\ManyToMany(targetEntity: Fornecedor::class, inversedBy: 'produtos')]
     private Collection $fornecedor;
 
     #[ORM\ManyToMany(targetEntity: Categoria::class, inversedBy: 'produtos')]
     private Collection $categoria;
+
+    #[ORM\OneToMany(mappedBy: 'produto', targetEntity: Ordem::class)]
+    private Collection $ordems;
+
+    #[ORM\OneToMany(mappedBy: 'produto', targetEntity: ProdutoShopping::class)]
+    private Collection $shopping;
 
     public function __construct($name, $description, $weight, $unit)
     {
@@ -53,7 +58,9 @@ class Produto
         $this->weight = $weight;
         $this->fornecedor = new ArrayCollection();
         $this->categoria = new ArrayCollection();
-        $this->produtoHasEstoques = new ArrayCollection();
+        $this->estoque = new ArrayCollection();
+        $this->ordems = new ArrayCollection();
+        $this->shopping = new ArrayCollection();
     }
 
     /**
@@ -131,24 +138,35 @@ class Produto
             array_push($categorias, $categoria->getValues());
         }
 
-        $estoques = array();
-        // dd($this->getProdutoHasEstoques());
-        foreach ($this->getProdutoHasEstoques() as $stock) {
-            array_push($estoques, ['id' => $stock->getEstoque()->getId(), 'name' => $stock->getEstoque()->getName()]);
+        $armazens = array();
+        foreach ($this->getEstoque() as $stock) {
+            $armazens[] = [
+                'id' => $stock->getId(),
+                'armazem' => $stock->getArmazem()->getName(),
+                'qtt_max' => $stock->getQttMax(),
+                'qtt_min' => $stock->getQttMin(),
+                'quantity' => $stock->getQuantity(),
+            ];
         }
 
         $fornecedores = array();
 
         foreach ($this->getFornecedor() as $fornecedor) {
-            array_push($fornecedores, ['id' => $fornecedor->getId(), 'fantasia' => $fornecedor->getFantasia()]);
+            $fornecedores[] = [
+                'id' => $fornecedor->getId(),
+                'fantasia' => $fornecedor->getFantasia(),
+                'responsavel' => $fornecedor->getResponsavel()
+            ];
         }
         return [
             'id' => $this->id,
             'name' => $this->name,
             'description' => $this->description,
+            'unit' => $this->unit,
+            'weight' => $this->weight,
             'fornecedor' => $fornecedores,
             'categoria' => $categorias,
-            'estoques' => $estoques,
+            'estoque' => $armazens,
         ];
     }
 
@@ -195,29 +213,29 @@ class Produto
 
 
     /**
-     * @return Collection<int, ProdutoHasEstoque>
+     * @return Collection<int, Estoque>
      */
-    public function getProdutoHasEstoques(): Collection
+    public function getEstoque(): Collection
     {
-        return $this->produtoHasEstoques;
+        return $this->estoques;
     }
 
-    public function addProdutoHasEstoque(ProdutoHasEstoque $produtoHasEstoque): self
+    public function addEstoque(Estoque $estoque): self
     {
-        if (!$this->produtoHasEstoques->contains($produtoHasEstoque)) {
-            $this->produtoHasEstoques->add($produtoHasEstoque);
-            $produtoHasEstoque->setProduto($this);
+        if (!$this->estoques->contains($estoque)) {
+            $this->estoques->add($estoque);
+            $estoque->setProduto($this);
         }
 
         return $this;
     }
 
-    public function removeProdutoHasEstoque(ProdutoHasEstoque $produtoHasEstoque): self
+    public function removeEstoque(Estoque $estoque): self
     {
-        if ($this->produtoHasEstoques->removeElement($produtoHasEstoque)) {
+        if ($this->estoques->removeElement($estoque)) {
             // set the owning side to null (unless already changed)
-            if ($produtoHasEstoque->getProduto() === $this) {
-                $produtoHasEstoque->setProduto(null);
+            if ($estoque->getProduto() === $this) {
+                $estoque->setProduto(null);
             }
         }
 
@@ -271,4 +289,65 @@ class Produto
 
         return $this;
     }
+
+    /**
+     * @return Collection<int, Ordem>
+     */
+    public function getOrdems(): Collection
+    {
+        return $this->ordems;
+    }
+
+    public function addOrdem(Ordem $ordem): self
+    {
+        if (!$this->ordems->contains($ordem)) {
+            $this->ordems->add($ordem);
+            $ordem->setProduto($this);
+        }
+
+        return $this;
+    }
+
+    public function removeOrdem(Ordem $ordem): self
+    {
+        if ($this->ordems->removeElement($ordem)) {
+            // set the owning side to null (unless already changed)
+            if ($ordem->getProduto() === $this) {
+                $ordem->setProduto(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, produtoShopping>
+     */
+    public function getShopping(): Collection
+    {
+        return $this->shopping;
+    }
+
+    public function addShopping(produtoShopping $shopping): self
+    {
+        if (!$this->shopping->contains($shopping)) {
+            $this->shopping->add($shopping);
+            $shopping->setProduto($this);
+        }
+
+        return $this;
+    }
+
+    public function removeShopping(produtoShopping $shopping): self
+    {
+        if ($this->shopping->removeElement($shopping)) {
+            // set the owning side to null (unless already changed)
+            if ($shopping->getProduto() === $this) {
+                $shopping->setProduto(null);
+            }
+        }
+
+        return $this;
+    }
+
 }

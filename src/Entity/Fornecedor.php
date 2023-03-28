@@ -5,7 +5,6 @@ namespace App\Entity;
 use App\Repository\FornecedorRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
-use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Validator\Constraints\NotBlank;
 
@@ -176,11 +175,13 @@ class Fornecedor
 
         $produtos = array();
         foreach ($this->getProdutos() as $produto) {
-            $produtoHasEstoques = $produto->getProdutoHasEstoques();
-            foreach ($produtoHasEstoques as $protudoHasEstoque) {
-                 $estoque = $protudoHasEstoque->getEstoque();
-                array_push($produtos, $estoque->getValues());
-            }
+            array_push($produtos, [
+                'id' => $produto->getId(),
+                'name' => $produto->getName(),
+                'description' => $produto->getDescription(),
+                'unit' => $produto->getUnit(),
+                'weight' => $produto->getWeight()
+            ]);
         }
 
         return [
