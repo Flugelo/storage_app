@@ -6,15 +6,15 @@ Esse projeto é focado em armazenamento e saida de produtos.
 #### Backend:
 - [x] Sistema de autenticação.
 - [x] Sistema de registro de produtos, fornecedores, aramazem e estoque.
-- [ ] Entrada de produtos.
-- [ ] Saida de produtos.
+- [x] Entrada de produtos.
+- [x] Saida de produtos.
 - [ ] Sistema de reembolso de produtos.
 - [ ] Sistema de agenda.
-- [ ] Sistema de solicitações.
+- [x] Sistema de solicitações.
 - [ ] Sistema de relatórios .
 
 #### Frontend
-- [ ] Pagina de login.
+- [x] Pagina de login.
 - [x] Dashboard inicial.
 - [x] Listagem de produtos.
 - [x] Listagem de fornecedores.
